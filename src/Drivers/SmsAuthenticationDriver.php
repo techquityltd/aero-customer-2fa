@@ -16,7 +16,13 @@ class SmsAuthenticationDriver extends AuthenticationDriver
     {
         $code = $this->getCode($customer);
 
-        $number = $customer->addresses->first()->phone;
+        $address = $customer->addresses->first();
+        $number = $address ? $address->phone : null;
+
+        if (!$number) {
+            TwoFactorLog::error('No phone number found for customer ID ' . $customer->id);
+            return;
+        }
 
         $message = str_replace('{{ code }}', $code, setting('customer-2fa.sms-message'));
 
