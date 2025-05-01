@@ -1,0 +1,9 @@
+<div id="bpa-verify-two-factor-authentication-description">
+    We've emailed a six-digit code to {{ customer.email_censored }}
+</div>
+{% include 'customer-2fa::partials.code-input' %}
+<br>
+<div class="bpa-flex-container">
+    <a id="bpa-verify-two-factor-authentication-link" class="bpa-two-factor-authentication-recovery-code-link" href="#" onclick="handleLinkClick()">Use a recovery code</a>
+</div>
+{% include 'customer-2fa::partials.verify-button' %}

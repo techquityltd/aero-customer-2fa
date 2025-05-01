@@ -1,0 +1,17 @@
+<div class="bg-white p-8 lg:p-12 shadow-lg">
+    <div id="bpa-verify-two-factor-authentication-description" class="font-light mb-5">
+        We've texted a six-digit code to {{ customer.phone_censored }}
+    </div>
+
+    <div class="space-y-4">
+        {% include 'customer-2fa::partials.code-input' %}
+    </div>
+
+    <div class="bpa-flex-container mt-3">
+        <a id="bpa-verify-two-factor-authentication-link" class="bpa-two-factor-authentication-recovery-code-link underline text-sm hover:text-accent" href="#" onclick="handleLinkClick()">Use a recovery code</a>
+    </div>
+
+    {% include 'customer-2fa::partials.verify-button' %}
+</div>
+
+{{ theme_css("2fa.css") }}

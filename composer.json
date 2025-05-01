@@ -1,0 +1,22 @@
+{
+  "name": "techquity/aero-customer-2fa",
+  "description": "",
+  "require": {
+    "php": "^7.2|^8.0",
+    "aerocargo/customer-2fa": "^0",
+    "aerocommerce/core": "^0",
+    "techquity/aero-logs": "^1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Techquity\\AeroCustomer2Fa\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Techquity\\AeroCustomer2Fa\\ServiceProvider"
+      ]
+    }
+  }
+}
