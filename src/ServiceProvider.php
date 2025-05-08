@@ -13,6 +13,7 @@ use Aero\Events\ManagedHandler;
 use Aerocargo\Customer2FA\Actions\Enable2fa;
 use Aerocargo\Customer2FA\Facades\Customer2FA;
 use Aerocargo\Customer2FA\Models\Customer2faMethod;
+use Illuminate\Routing\Router;
 use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifyEmailAuthenticationForm;
 use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifySmsAuthenticationForm;
 use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifyEmailAuthenticationPage;
@@ -49,6 +50,8 @@ class ServiceProvider extends ModuleServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/two-factor-authentication.php', 'two-factor-authentication');
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'customer-2fa');
+
+        Router::addStoreRoutes(__DIR__ . '/../routes/web.php');
 
         $this->commands([
             FixEncryptionKeysCommand::class,
@@ -97,18 +100,22 @@ class ServiceProvider extends ModuleServiceProvider
         });
 
         Customer::macro('getPhoneCensoredAttribute', function () {
-            $phone = optional($this->addresses->first())->phone;
+            $address = $this->addresses->first();
 
-            if ($phone) {
-                $start = substr($phone, 0, 3);
-                $end = substr($phone, -3, 3);
-                $censored = strlen($phone) - 3 - 3;
+            if ($address) {
+                $phone = $address->mobile ?? $address->phone;
 
-                if ($censored < 0) {
-                    $censored = 0;
+                if ($phone) {
+                    $start = substr($phone, 0, 3);
+                    $end = substr($phone, -3, 3);
+                    $censored = strlen($phone) - 3 - 3;
+
+                    if ($censored < 0) {
+                        $censored = 0;
+                    }
+
+                    return $start . str_repeat('*', $censored) . $end;
                 }
-
-                return $start . str_repeat('*', $censored) . $end;
             }
 
             return '';
