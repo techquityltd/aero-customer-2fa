@@ -44,6 +44,8 @@ class ServiceProvider extends ModuleServiceProvider
             $group->eloquent('default-auth-method', Customer2faMethod::class);
         });
 
+        $this->addMobileFieldToRegistrationForm();
+
         $this->publishes([
             __DIR__ . '/../config/two-factor-authentication.php' => config_path('two-factor-authentication.php')
         ]);
@@ -66,6 +68,9 @@ class ServiceProvider extends ModuleServiceProvider
         AccountRegisterSet::extend(function($builder) {
             $customer = $builder->getData('user');
             $method = setting('customer-2fa.default-auth-method');
+
+            $customer->customer_2fa_telephone_number = $builder->request->get('mobile');
+            $customer->save();
 
             if ($method) {
                 $customer->two_factor_authentication_method_id = $method->id;
@@ -126,6 +131,7 @@ class ServiceProvider extends ModuleServiceProvider
 
     protected function addMobileFieldToRegistrationForm(): void
     {
+        Customer::makeFillable('customer_2fa_telephone_number');
         $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
         ValidateRegister::expects('mobile', $validationRules);
 
