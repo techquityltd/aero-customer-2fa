@@ -5,6 +5,7 @@ namespace Techquity\AeroCustomer2Fa;
 use Aero\Account\Events\CustomerRegistered;
 use Aero\Account\Models\Customer;
 use Aero\AccountArea\AccountArea;
+use Aero\AccountArea\Http\Requests\ValidateRegister;
 use Aero\AccountArea\Http\Responses\AccountRegisterSet;
 use Aero\Common\Facades\Settings;
 use Aero\Common\Providers\ModuleServiceProvider;
@@ -121,5 +122,15 @@ class ServiceProvider extends ModuleServiceProvider
             return '';
         });
 
+    }
+
+    protected function addMobileFieldToRegistrationForm(): void
+    {
+        $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
+        ValidateRegister::expects('mobile', $validationRules);
+
+        if ($this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+        }
     }
 }
