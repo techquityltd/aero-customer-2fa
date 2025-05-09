@@ -34,11 +34,11 @@
 
     {% include 'account-area::components.input' with {
         prefix: 'bpa-login',
-        id: 'bpa-mobile-phone',
+        id: 'bpa-mobile',
         type: 'text',
         name: 'mobile',
         label: 'Mobile',
-        value: old('mobile', user.customer_2fa_telephone_number),
+        value: old('mobile', user.mobile),
         placeholder: 'Mobile Number',
         required: true,
     } %}
