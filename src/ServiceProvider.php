@@ -73,7 +73,7 @@ class ServiceProvider extends ModuleServiceProvider
             $customer = $builder->getData('user');
             $method = setting('customer-2fa.default-auth-method');
 
-            $customer->customer_2fa_telephone_number = $builder->request->get('mobile');
+            $customer->mobile = $builder->request->get('mobile');
             $customer->save();
 
             if ($method) {
@@ -89,19 +89,6 @@ class ServiceProvider extends ModuleServiceProvider
 
         $validationRules = ['mobile' => 'required', 'numeric', 'digits_between:9,12'];
         ValidateAccountDetails::expects('mobile', $validationRules);
-
-        AccountDetailsSet::extend(function($builder){
-            if ($mobile = $builder->request->get('mobile')){
-
-                $customer = Customer::find($builder->getData('user')->id);
-                $customer->customer_2fa_telephone_number = $mobile;
-
-                if ($customer->isDirty('customer_2fa_telephone_number')) {
-                    $customer->save();
-                }
-
-            }
-        });
 
         $this->publishViewFiles();
 
@@ -130,8 +117,8 @@ class ServiceProvider extends ModuleServiceProvider
         Customer::macro('getPhoneCensoredAttribute', function () {
             $address = $this->addresses->first();
 
-            if ($address || $this->customer_2fa_telephone_number) {
-                $phone = $this->customer_2fa_telephone_number ?? $address->mobile;
+            if ($address || $this->mobile) {
+                $phone = $this->mobile ?? $address->mobile;
                 if ($phone) {
                     $start = substr($phone, 0, 3);
                     $end = substr($phone, -3, 3);
@@ -152,7 +139,7 @@ class ServiceProvider extends ModuleServiceProvider
 
     protected function addMobileFieldToRegistrationForm(): void
     {
-        Customer::makeFillable('customer_2fa_telephone_number');
+        Customer::makeFillable('mobile');
         $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
         ValidateRegister::expects('mobile', $validationRules);
     }
