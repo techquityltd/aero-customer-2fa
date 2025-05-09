@@ -44,6 +44,8 @@ class ServiceProvider extends ModuleServiceProvider
             $group->eloquent('default-auth-method', Customer2faMethod::class);
         });
 
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        
         $this->addMobileFieldToRegistrationForm();
 
         $this->publishes([
@@ -134,9 +136,5 @@ class ServiceProvider extends ModuleServiceProvider
         Customer::makeFillable('customer_2fa_telephone_number');
         $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
         ValidateRegister::expects('mobile', $validationRules);
-
-        if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-        }
     }
 }
