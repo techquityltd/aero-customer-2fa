@@ -5,7 +5,9 @@ namespace Techquity\AeroCustomer2Fa;
 use Aero\Account\Events\CustomerRegistered;
 use Aero\Account\Models\Customer;
 use Aero\AccountArea\AccountArea;
+use Aero\AccountArea\Http\Requests\ValidateAccountDetails;
 use Aero\AccountArea\Http\Requests\ValidateRegister;
+use Aero\AccountArea\Http\Responses\AccountDetailsSet;
 use Aero\AccountArea\Http\Responses\AccountRegisterSet;
 use Aero\Common\Facades\Settings;
 use Aero\Common\Providers\ModuleServiceProvider;
@@ -47,6 +49,7 @@ class ServiceProvider extends ModuleServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         
         $this->addMobileFieldToRegistrationForm();
+        $this->publishFiles();
 
         $this->publishes([
             __DIR__ . '/../config/two-factor-authentication.php' => config_path('two-factor-authentication.php')
@@ -82,6 +85,22 @@ class ServiceProvider extends ModuleServiceProvider
                 $auth($customer);
 
                 $customer->two_factor_authentication_driver->enable();
+            }
+        });
+
+        $validationRules = ['mobile' => 'required', 'numeric', 'digits_between:9,12'];
+        ValidateAccountDetails::expects('mobile', $validationRules);
+
+        AccountDetailsSet::extend(function($builder){
+            if ($mobile = $builder->request->get('mobile')){
+
+                $customer = Customer::find($builder->getData('user')->id);
+                $customer->customer_2fa_telephone_number = $mobile;
+
+                if ($customer->isDirty('customer_2fa_telephone_number')) {
+                    $customer->save();
+                }
+
             }
         });
 
@@ -136,4 +155,12 @@ class ServiceProvider extends ModuleServiceProvider
         $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
         ValidateRegister::expects('mobile', $validationRules);
     }
+
+    protected function publishFiles()
+    {
+        $this->publishes([
+            __DIR__.'/../resources/views/account-area' => base_path("themes/" . config('two-factor-authentication.theme') . "/resources/views/vendor/account-area/sections"),
+        ], 'aero-customer-2fa');
+    }
+
 }
