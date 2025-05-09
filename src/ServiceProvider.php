@@ -48,9 +48,8 @@ class ServiceProvider extends ModuleServiceProvider
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         
-        $this->addMobileFieldToRegistrationForm();
-        $this->publishFiles();
 
+        $this->addMobileFieldToRegistrationForm();
         $this->publishes([
             __DIR__ . '/../config/two-factor-authentication.php' => config_path('two-factor-authentication.php')
         ]);
@@ -104,6 +103,8 @@ class ServiceProvider extends ModuleServiceProvider
             }
         });
 
+        $this->publishViewFiles();
+
         AccountArea::registerPage(VerifyEmailAuthenticationPage::class);
         AccountArea::registerForm(VerifyEmailAuthenticationForm::class);
 
@@ -156,11 +157,11 @@ class ServiceProvider extends ModuleServiceProvider
         ValidateRegister::expects('mobile', $validationRules);
     }
 
-    protected function publishFiles()
+    protected function publishViewFiles()
     {
         $this->publishes([
             __DIR__.'/../resources/views/account-area' => base_path("themes/" . config('two-factor-authentication.theme') . "/resources/views/vendor/account-area/sections"),
-        ], 'aero-customer-2fa');
+        ]);
     }
 
 }
