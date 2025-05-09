@@ -110,9 +110,8 @@ class ServiceProvider extends ModuleServiceProvider
         Customer::macro('getPhoneCensoredAttribute', function () {
             $address = $this->addresses->first();
 
-            if ($address) {
-                $phone = $address->mobile ?? $address->phone;
-
+            if ($address || $this->customer_2fa_telephone_number) {
+                $phone = $this->customer_2fa_telephone_number ?? $address->mobile;
                 if ($phone) {
                     $start = substr($phone, 0, 3);
                     $end = substr($phone, -3, 3);
