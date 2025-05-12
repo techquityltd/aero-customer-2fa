@@ -18,7 +18,7 @@ class SmsAuthenticationDriver extends AuthenticationDriver
 
         try {
             $address = $customer->addresses->first();
-            $number = $customer->customer_2fa_telephone_number ?: $address->mobile;
+            $number = $customer->mobile ?: $address->mobile;
 
             $message = str_replace('{{ code }}', $code, setting('customer-2fa.sms-message'));
 
