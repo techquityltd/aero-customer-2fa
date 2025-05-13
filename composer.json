@@ -15,7 +15,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Techquity\\AeroCustomer2Fa\\ServiceProvider"
+        "Techquity\\AeroCustomer2FA\\ServiceProvider"
       ]
     }
   }
