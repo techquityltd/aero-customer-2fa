@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Techquity\\AeroCustomer2Fa\\": "src/"
+      "Techquity\\AeroCustomer2FA\\": "src/"
     }
   },
   "extra": {
