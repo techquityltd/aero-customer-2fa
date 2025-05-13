@@ -4,7 +4,6 @@ namespace Techquity\AeroCustomer2FA\Drivers;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifyEmailAuthenticationPage;
 use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifySmsAuthenticationPage;
 use Techquity\AeroCustomer2FA\Helpers\TwoFactorLog;
 
