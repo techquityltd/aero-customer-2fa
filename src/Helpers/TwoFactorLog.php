@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Helpers;
+namespace Techquity\AeroCustomer2FA\Helpers;
 
 use Techquity\AeroLogs\AeroLog;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa;
+namespace Techquity\AeroCustomer2FA;
 
 use Aero\Account\Events\CustomerRegistered;
 use Aero\Account\Models\Customer;
@@ -17,14 +17,14 @@ use Aerocargo\Customer2FA\Actions\Enable2fa;
 use Aerocargo\Customer2FA\Facades\Customer2FA;
 use Aerocargo\Customer2FA\Models\Customer2faMethod;
 use Illuminate\Routing\Router;
-use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifyEmailAuthenticationForm;
-use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifySmsAuthenticationForm;
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifyEmailAuthenticationPage;
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifySmsAuthenticationPage;
-use Techquity\AeroCustomer2Fa\Console\Commands\FixEncryptionKeysCommand;
-use Techquity\AeroCustomer2Fa\Drivers\EmailAuthenticationDriver;
-use Techquity\AeroCustomer2Fa\Drivers\SmsAuthenticationDriver;
-use Techquity\AeroCustomer2Fa\Events\CustomerRequestedTwoFactorAuthenticationEmail;
+use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifyEmailAuthenticationForm;
+use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifySmsAuthenticationForm;
+use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifyEmailAuthenticationPage;
+use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifySmsAuthenticationPage;
+use Techquity\AeroCustomer2FA\Console\Commands\FixEncryptionKeysCommand;
+use Techquity\AeroCustomer2FA\Drivers\EmailAuthenticationDriver;
+use Techquity\AeroCustomer2FA\Drivers\SmsAuthenticationDriver;
+use Techquity\AeroCustomer2FA\Events\CustomerRequestedTwoFactorAuthenticationEmail;
 
 class ServiceProvider extends ModuleServiceProvider
 {

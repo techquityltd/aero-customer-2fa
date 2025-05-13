@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\AccountArea\Steps;
+namespace Techquity\AeroCustomer2FA\AccountArea\Steps;
 
 use Aero\Account\Models\Customer;
 use Aero\Responses\ResponseBuilder;
