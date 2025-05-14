@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Drivers;
+namespace Techquity\AeroCustomer2FA\Drivers;
 
 use Aero\Account\Models\Customer;
 use Aerocargo\Customer2FA\AccountArea\Pages\DisableTwoFactorAuthenticationPage;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Drivers;
+namespace Techquity\AeroCustomer2FA\Drivers;
 
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifyEmailAuthenticationPage;
-use Techquity\AeroCustomer2Fa\Events\CustomerRequestedTwoFactorAuthenticationEmail;
+use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifyEmailAuthenticationPage;
+use Techquity\AeroCustomer2FA\Events\CustomerRequestedTwoFactorAuthenticationEmail;
 
 class EmailAuthenticationDriver extends AuthenticationDriver
 {

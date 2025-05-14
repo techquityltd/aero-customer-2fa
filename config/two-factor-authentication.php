@@ -1,5 +1,6 @@
 <?php
 
 return [
-    'sms-class' => ''
+    'sms-class' => '',
+    'theme' => env('AERO_THEME', false),
 ];

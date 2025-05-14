@@ -1,12 +1,11 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Drivers;
+namespace Techquity\AeroCustomer2FA\Drivers;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifyEmailAuthenticationPage;
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifySmsAuthenticationPage;
-use Techquity\AeroCustomer2Fa\Helpers\TwoFactorLog;
+use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifySmsAuthenticationPage;
+use Techquity\AeroCustomer2FA\Helpers\TwoFactorLog;
 
 class SmsAuthenticationDriver extends AuthenticationDriver
 {
@@ -18,7 +17,7 @@ class SmsAuthenticationDriver extends AuthenticationDriver
 
         try {
             $address = $customer->addresses->first();
-            $number = $address->mobile ?: $address->phone;
+            $number = $customer->mobile ?: $address->mobile;
 
             $message = str_replace('{{ code }}', $code, setting('customer-2fa.sms-message'));
 

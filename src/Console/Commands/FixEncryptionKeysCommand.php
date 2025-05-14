@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Console\Commands;
+namespace Techquity\AeroCustomer2FA\Console\Commands;
 
 use Aero\Account\Models\Customer;
 use Aerocargo\Customer2FA\RecoveryCode;

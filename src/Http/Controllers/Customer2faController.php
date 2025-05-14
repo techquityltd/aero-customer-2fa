@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Http\Controllers;
+namespace Techquity\AeroCustomer2FA\Http\Controllers;
 
 use Aero\Account\Models\Customer;
 use Aerocargo\Customer2FA\Actions\Enable2fa;
