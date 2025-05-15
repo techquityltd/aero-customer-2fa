@@ -118,7 +118,7 @@ class ServiceProvider extends ModuleServiceProvider
             $address = $this->addresses->first();
 
             if ($address || $this->mobile) {
-                $phone = $this->mobile ?? $address->mobile;
+                $phone = $this->mobile ?: $address->mobile ?: $address->phone;
                 if ($phone) {
                     $start = substr($phone, 0, 3);
                     $end = substr($phone, -3, 3);
