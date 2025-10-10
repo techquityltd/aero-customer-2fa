@@ -1,10 +1,13 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa;
+namespace Techquity\AeroCustomer2FA;
 
 use Aero\Account\Events\CustomerRegistered;
 use Aero\Account\Models\Customer;
 use Aero\AccountArea\AccountArea;
+use Aero\AccountArea\Http\Requests\ValidateAccountDetails;
+use Aero\AccountArea\Http\Requests\ValidateRegister;
+use Aero\AccountArea\Http\Responses\AccountDetailsSet;
 use Aero\AccountArea\Http\Responses\AccountRegisterSet;
 use Aero\Common\Facades\Settings;
 use Aero\Common\Providers\ModuleServiceProvider;
@@ -14,14 +17,14 @@ use Aerocargo\Customer2FA\Actions\Enable2fa;
 use Aerocargo\Customer2FA\Facades\Customer2FA;
 use Aerocargo\Customer2FA\Models\Customer2faMethod;
 use Illuminate\Routing\Router;
-use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifyEmailAuthenticationForm;
-use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifySmsAuthenticationForm;
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifyEmailAuthenticationPage;
-use Techquity\AeroCustomer2Fa\AccountArea\Pages\VerifySmsAuthenticationPage;
-use Techquity\AeroCustomer2Fa\Console\Commands\FixEncryptionKeysCommand;
-use Techquity\AeroCustomer2Fa\Drivers\EmailAuthenticationDriver;
-use Techquity\AeroCustomer2Fa\Drivers\SmsAuthenticationDriver;
-use Techquity\AeroCustomer2Fa\Events\CustomerRequestedTwoFactorAuthenticationEmail;
+use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifyEmailAuthenticationForm;
+use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifySmsAuthenticationForm;
+use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifyEmailAuthenticationPage;
+use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifySmsAuthenticationPage;
+use Techquity\AeroCustomer2FA\Console\Commands\FixEncryptionKeysCommand;
+use Techquity\AeroCustomer2FA\Drivers\EmailAuthenticationDriver;
+use Techquity\AeroCustomer2FA\Drivers\SmsAuthenticationDriver;
+use Techquity\AeroCustomer2FA\Events\CustomerRequestedTwoFactorAuthenticationEmail;
 
 class ServiceProvider extends ModuleServiceProvider
 {
@@ -43,6 +46,10 @@ class ServiceProvider extends ModuleServiceProvider
             $group->eloquent('default-auth-method', Customer2faMethod::class);
         });
 
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        
+
+        $this->addMobileFieldToRegistrationForm();
         $this->publishes([
             __DIR__ . '/../config/two-factor-authentication.php' => config_path('two-factor-authentication.php')
         ]);
@@ -66,6 +73,9 @@ class ServiceProvider extends ModuleServiceProvider
             $customer = $builder->getData('user');
             $method = setting('customer-2fa.default-auth-method');
 
+            $customer->mobile = $builder->request->get('mobile');
+            $customer->save();
+
             if ($method) {
                 $customer->two_factor_authentication_method_id = $method->id;
                 $customer->save();
@@ -76,6 +86,11 @@ class ServiceProvider extends ModuleServiceProvider
                 $customer->two_factor_authentication_driver->enable();
             }
         });
+
+        $validationRules = ['mobile' => 'required', 'numeric', 'digits_between:9,12'];
+        ValidateAccountDetails::expects('mobile', $validationRules);
+
+        $this->publishViewFiles();
 
         AccountArea::registerPage(VerifyEmailAuthenticationPage::class);
         AccountArea::registerForm(VerifyEmailAuthenticationForm::class);
@@ -102,9 +117,8 @@ class ServiceProvider extends ModuleServiceProvider
         Customer::macro('getPhoneCensoredAttribute', function () {
             $address = $this->addresses->first();
 
-            if ($address) {
-                $phone = $address->mobile ?? $address->phone;
-
+            if ($address || $this->mobile) {
+                $phone = $this->mobile ?: $address->mobile ?: $address->phone;
                 if ($phone) {
                     $start = substr($phone, 0, 3);
                     $end = substr($phone, -3, 3);
@@ -122,4 +136,19 @@ class ServiceProvider extends ModuleServiceProvider
         });
 
     }
+
+    protected function addMobileFieldToRegistrationForm(): void
+    {
+        Customer::makeFillable('mobile');
+        $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
+        ValidateRegister::expects('mobile', $validationRules);
+    }
+
+    protected function publishViewFiles()
+    {
+        $this->publishes([
+            __DIR__.'/../resources/views/account-area' => base_path("themes/" . config('two-factor-authentication.theme') . "/resources/views/vendor/account-area/sections"),
+        ]);
+    }
+
 }

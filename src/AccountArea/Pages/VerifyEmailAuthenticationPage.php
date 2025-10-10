@@ -1,11 +1,11 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\AccountArea\Pages;
+namespace Techquity\AeroCustomer2FA\AccountArea\Pages;
 
 use Aero\AccountArea\AccountAreaPage;
 use Aerocargo\Customer2FA\Http\Middleware\EnsureRequestHasChallengedUser;
-use Techquity\AeroCustomer2Fa\AccountArea\Forms\VerifyEmailAuthenticationForm;
-use Techquity\AeroCustomer2Fa\AccountArea\Steps\AttachCustomer;
+use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifyEmailAuthenticationForm;
+use Techquity\AeroCustomer2FA\AccountArea\Steps\AttachCustomer;
 
 class VerifyEmailAuthenticationPage extends AccountAreaPage
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Actions;
+namespace Techquity\AeroCustomer2FA\Actions;
 
 use Aero\Account\Models\Customer;
 use Aero\AccountArea\Http\Responses\Steps\ApplyRegister;

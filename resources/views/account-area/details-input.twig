@@ -1,0 +1,46 @@
+<div class="bpa-personal-info__grid">
+    {% include 'account-area::components.input' with {
+        prefix: 'bpa-personal-info',
+        id: 'bpa-personal-info-first-name',
+        type: 'text',
+        name: 'first_name',
+        label: trans('account-area::labels.first_name'),
+        placeholder: trans('account-area::placeholders.first_name'),
+        value: old('first_name', user.first_name),
+        required: true,
+    } %}
+
+    {% include 'account-area::components.input' with {
+        prefix: 'bpa-personal-info',
+        id: 'bpa-personal-info-last-name',
+        type: 'text',
+        name: 'last_name',
+        label: trans('account-area::labels.last_name'),
+        placeholder: trans('account-area::placeholders.last_name'),
+        value: old('last_name', user.last_name),
+        required: true,
+    } %}
+
+    {% include 'account-area::components.input' with {
+        prefix: 'bpa-personal-info',
+        id: 'bpa-personal-info-email',
+        type: 'text',
+        name: 'email',
+        label: trans('account-area::labels.email'),
+        placeholder: trans('account-area::placeholders.email'),
+        value: old('email', user.email),
+        required: true,
+    } %}
+
+    {% include 'account-area::components.input' with {
+        prefix: 'bpa-login',
+        id: 'bpa-mobile',
+        type: 'text',
+        name: 'mobile',
+        label: 'Mobile',
+        value: old('mobile', user.mobile),
+        placeholder: 'Mobile Number',
+        required: true,
+    } %}
+
+</div>

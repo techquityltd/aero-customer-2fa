@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\Events;
+namespace Techquity\AeroCustomer2FA\Events;
 
 use Aero\Account\Models\Customer;
 use Aero\Events\ManagedEvent;

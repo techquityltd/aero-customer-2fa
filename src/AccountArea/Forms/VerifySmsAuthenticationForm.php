@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\AeroCustomer2Fa\AccountArea\Forms;
+namespace Techquity\AeroCustomer2FA\AccountArea\Forms;
 
 use Aero\AccountArea\AccountAreaForm;
 
