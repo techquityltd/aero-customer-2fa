@@ -4,6 +4,7 @@ namespace Techquity\AeroCustomer2FA\Http\Controllers;
 
 use Aero\Account\Models\Customer;
 use Aerocargo\Customer2FA\Actions\Enable2fa;
+use Aerocargo\Customer2FA\Facades\Customer2FA;
 use Aerocargo\Customer2FA\Models\Customer2faMethod;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -35,5 +36,25 @@ class Customer2faController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function send()
+    {
+        $customer = Customer::query()
+            ->find(
+                request()->session()->get('login.id')
+            );
+
+        $driver = match ($customer->twoFactorAuthenticationMethod->driver) {
+            'sms' => 'email',
+            'email' => 'sms',
+        };
+
+        $driverClass = Customer2FA::getDriver($driver);
+        $driverClass->verify();
+
+        return [
+            'success' => true
+        ];
     }
 }
