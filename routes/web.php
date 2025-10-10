@@ -8,4 +8,5 @@ Route::controller(Customer2faController::class)
     ->name('customer-2fa.')
     ->group(function () {
         Route::post('/update', 'update')->name('update');
+        Route::get('/send', 'send')->name('send');
     });
