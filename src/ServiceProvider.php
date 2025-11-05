@@ -44,6 +44,8 @@ class ServiceProvider extends ModuleServiceProvider
                 ->section('SMS');
 
             $group->eloquent('default-auth-method', Customer2faMethod::class);
+
+            $group->string('two-factor-input-title')->default('Multifactor Authentication');
         });
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
@@ -71,17 +73,24 @@ class ServiceProvider extends ModuleServiceProvider
 
         AccountRegisterSet::extend(function($builder) {
             $customer = $builder->getData('user');
-            $method = setting('customer-2fa.default-auth-method');
 
             $customer->mobile = $builder->request->get('mobile');
             $customer->save();
 
-            if ($method) {
-                $customer->two_factor_authentication_method_id = $method->id;
-                $customer->save();
+            $method = null;
 
-                $auth = new Enable2fa;
-                $auth($customer);
+            if ($builder->request->has('two_factor_authentication_method')) {
+                $method = Customer2faMethod::firstWhere('driver', $builder->request->get('two_factor_authentication_method'));
+            }
+
+            $method = $method ?? setting('customer-2fa.default-auth-method');
+
+            if ($method) {
+                $customer->forceFill([
+                    'two_factor_authentication_method_id' => $method->id,
+                ])->save();
+
+                resolve(Enable2fa::class)($customer);
 
                 $customer->two_factor_authentication_driver->enable();
             }

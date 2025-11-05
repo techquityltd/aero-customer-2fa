@@ -1,0 +1,14 @@
+<div data-section="two-fa-select" class="formInput col-span-1 bpa-login__block">
+    <label class="bpa-login__label">{{ setting('customer-2fa.two-factor-input-title', 'Multifactor Authentication') }}</label>
+
+    <div class="bpa-flex-container bpa-flex-container--large-spacing">
+        <div class="bpa-radio-container">
+            <input class="bpa-personal-info__input" type="radio" id="bpa-login-email-auth" name="two_factor_authentication_method" value="email" {{ old('two_factor_authentication_method') == 'email' or old('two_factor_authentication_method') is null ? 'checked' : '' }}>
+            <label class="bpa-personal-info__label" for="bpa-login-email-auth">Email</label>
+        </div>
+        <div class="bpa-radio-container">
+            <input class="bpa-personal-info__input" type="radio" id="bpa-login-sms-auth" name="two_factor_authentication_method" value="sms" {{ old('two_factor_authentication_method') == 'sms' ? 'checked' : '' }}>
+            <label class="bpa-personal-info__label" for="bpa-login-sms-auth">SMS</label>
+        </div>
+    </div>
+</div>
