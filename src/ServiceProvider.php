@@ -191,7 +191,7 @@ class ServiceProvider extends ModuleServiceProvider
             $method = Customer2faMethod::firstWhere('driver', $request->input('two_factor_authentication_method')) ??
                 setting('customer-2fa.default-auth-method');
 
-            if ($method) {
+            if ($method && $method->id !== $user->two_factor_authentication_method_id) {
                 $user->forceFill([
                     'two_factor_authentication_method_id' => $method->id,
                 ])->save();
