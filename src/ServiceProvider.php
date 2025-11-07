@@ -46,6 +46,8 @@ class ServiceProvider extends ModuleServiceProvider
                 ->max(160)
                 ->section('SMS');
 
+            $group->boolean('enable-sms')->label('Enable SMS')->default(true)->section('SMS');
+
             $group->eloquent('default-auth-method', Customer2faMethod::class);
 
             $group->string('two-factor-input-title')->default('Multifactor Authentication');
