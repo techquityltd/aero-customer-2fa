@@ -8,6 +8,7 @@ use Aero\AccountArea\AccountArea;
 use Aero\AccountArea\Http\Requests\ValidateAccountDetails;
 use Aero\AccountArea\Http\Requests\ValidateRegister;
 use Aero\AccountArea\Http\Responses\AccountDetailsSet;
+use Aero\AccountArea\Http\Responses\AccountLoginSet;
 use Aero\AccountArea\Http\Responses\AccountRegisterSet;
 use Aero\Common\Facades\Settings;
 use Aero\Common\Providers\ModuleServiceProvider;
@@ -16,7 +17,9 @@ use Aero\Events\ManagedHandler;
 use Aerocargo\Customer2FA\Actions\Enable2fa;
 use Aerocargo\Customer2FA\Facades\Customer2FA;
 use Aerocargo\Customer2FA\Models\Customer2faMethod;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Auth;
 use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifyEmailAuthenticationForm;
 use Techquity\AeroCustomer2FA\AccountArea\Forms\VerifySmsAuthenticationForm;
 use Techquity\AeroCustomer2FA\AccountArea\Pages\VerifyEmailAuthenticationPage;
@@ -96,6 +99,8 @@ class ServiceProvider extends ModuleServiceProvider
             }
         });
 
+        $this->extendLogin();
+
         $validationRules = ['mobile' => 'required', 'numeric', 'digits_between:9,12'];
         ValidateAccountDetails::expects('mobile', $validationRules);
 
@@ -160,4 +165,47 @@ class ServiceProvider extends ModuleServiceProvider
         ]);
     }
 
+    private function extendLogin()
+    {
+        AccountLoginSet::middleware(function (Request $request, \Closure $next) {
+            if (! $request->has('two_factor_authentication_method')) {
+                return $next($request);
+            }
+
+            $user = Customer::query()
+                ->where('email', $request->input('email'))
+                ->first();
+
+            if ($user === null) {
+                return $next($request);
+            }
+
+            if (! Auth::guard(config('aero.account.auth.defaults.guard'))->getProvider()->validateCredentials($user, ['password' => $request->input('password')])) {
+                return $next($request);
+            }
+
+            if (! $user->hasEnabledTwoFactorAuthentication()) {
+                return $next($request);
+            }
+
+            $method = Customer2faMethod::firstWhere('driver', $request->input('two_factor_authentication_method')) ??
+                setting('customer-2fa.default-auth-method');
+
+            if ($method) {
+                $user->forceFill([
+                    'two_factor_authentication_method_id' => $method->id,
+                ])->save();
+
+                resolve(Enable2fa::class)($user);
+
+                $user->forceFill([
+                    'two_factor_confirmed_at' => now(),
+                ])->save();
+
+                $user->forget();
+            }
+
+            return $next($request);
+        });
+    }
 }
