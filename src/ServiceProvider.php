@@ -51,12 +51,14 @@ class ServiceProvider extends ModuleServiceProvider
             $group->eloquent('default-auth-method', Customer2faMethod::class);
 
             $group->string('two-factor-input-title')->default('Multifactor Authentication');
+
+            $group->string('mobile-input-name')->default('mobile');
         });
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        
 
         $this->addMobileFieldToRegistrationForm();
+
         $this->publishes([
             __DIR__ . '/../config/two-factor-authentication.php' => config_path('two-factor-authentication.php')
         ]);
@@ -79,7 +81,7 @@ class ServiceProvider extends ModuleServiceProvider
         AccountRegisterSet::extend(function($builder) {
             $customer = $builder->getData('user');
 
-            $customer->mobile = $builder->request->get('mobile');
+            $customer->mobile = $builder->request->get($this->getMobileInputName());
             $customer->save();
 
             $method = null;
@@ -103,8 +105,8 @@ class ServiceProvider extends ModuleServiceProvider
 
         $this->extendLogin();
 
-        $validationRules = ['mobile' => 'required', 'numeric', 'digits_between:9,12'];
-        ValidateAccountDetails::expects('mobile', $validationRules);
+        $validationRules = [$this->getMobileInputName() => 'required', 'numeric', 'digits_between:9,12'];
+        ValidateAccountDetails::expects($this->getMobileInputName(), $validationRules);
 
         $this->publishViewFiles();
 
@@ -156,8 +158,8 @@ class ServiceProvider extends ModuleServiceProvider
     protected function addMobileFieldToRegistrationForm(): void
     {
         Customer::makeFillable('mobile');
-        $validationRules = ['mobile' => ['required', 'digits_between:9,12']];
-        ValidateRegister::expects('mobile', $validationRules);
+        $validationRules = [$this->getMobileInputName() => ['required', 'digits_between:9,12']];
+        ValidateRegister::expects($this->getMobileInputName(), $validationRules);
     }
 
     protected function publishViewFiles()
@@ -209,5 +211,10 @@ class ServiceProvider extends ModuleServiceProvider
 
             return $next($request);
         });
+    }
+
+    private function getMobileInputName(): string
+    {
+        return setting('customer-2fa.mobile-input-name', 'mobile');
     }
 }
